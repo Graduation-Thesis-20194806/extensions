@@ -1,0 +1,41 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../assets/fonts/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../assets/fonts/Montserrat-SemiBold.ttf') format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'BalooTamma2';
+  src: url('../assets/fonts/BalooTamma2-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+.container-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+}
+
+.typo-flex {
+  display: flex;
+  gap: 1rem;
+  align-items: 'center';
+}
+
+:root {
+  --primary-color: #008b8b;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}

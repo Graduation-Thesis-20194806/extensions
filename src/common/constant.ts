@@ -1,0 +1,27 @@
+export const API_URL = 'http://localhost:3001'
+export const AWS_URL = 'https://work-mana-s3.s3.ap-southeast-1.amazonaws.com'
+
+export const ACCESS_TOKEN_KEY = 'THESIS_ACCESS_TOKEN_KEY'
+export const REFRESH_TOKEN_KEY = 'THESIS_REFRESH_TOKEN_KEY'
+export const APP_STATE_KEY = 'THESIS_APP_STATE_KEY'
+export const APP_REPORT_TAB_KEY = 'THESIS_APP_REPORT_TAB_KEY'
+
+export enum ActionKey {
+  SEND_TO_S3 = 'SEND_TO_S3',
+  CREATE_REPORT = 'CREATE_REPORT',
+  UPDATE_REPORT = 'UPDATE_REPORT',
+  OPEN_REPORT = 'OPEN_REPORT',
+  GET_CURRENT_REPORT = 'GET_CURRENT_REPORT',
+  GET_TAB_ID = 'GET_TAB_ID',
+  UPLOAD_FILE = 'UPLOAD_FILE',
+  CREATE_COMMENT = 'CREATE_COMMENT',
+  UPDATE_COMMENT = 'UPDATE_COMMENT',
+  CLOSE_TABS = 'CLOSE_TABS',
+}
+
+export const UNIQUE_CODE = '8C5k0DbH'
+
+export enum ViewMode {
+  REPORT = 'REPORT',
+  COMMENTS = 'COMMENTS',
+}
