@@ -1,4 +1,9 @@
-import { CreateReportDto, ReportType, Severity } from '@/common/types/report'
+import {
+  CreateReportDto,
+  ReportIssueType,
+  ReportType,
+  Severity,
+} from '@/common/types/report'
 import {
   Controller,
   useFieldArray,
@@ -55,6 +60,20 @@ const severityList = [
     color: 'red',
   },
 ]
+const issueTypeList = [
+  { label: 'UI', value: ReportIssueType.UI, color: 'red' },
+  { label: 'Functional', value: ReportIssueType.FUNCTIONAL, color: 'orange' },
+  { label: 'Performance', value: ReportIssueType.PERFORMANCE, color: 'gold' },
+  { label: 'Security', value: ReportIssueType.SECURITY, color: 'green' },
+  { label: 'Network', value: ReportIssueType.NETWORK, color: 'cyan' },
+  {
+    label: 'Compatibility',
+    value: ReportIssueType.COMPATIBILITY,
+    color: 'blue',
+  },
+  { label: 'Data', value: ReportIssueType.DATA, color: 'purple' },
+  { label: 'Unknown', value: undefined, color: 'default' },
+]
 export function ReportEditView({
   onTakeScreenShot,
   handleUpload,
@@ -88,6 +107,22 @@ export function ReportEditView({
       i = -1
     }
     setValue('severity', severityList[i + 1].value)
+  }
+  const issueTypeEntity = useMemo(() => {
+    return issueTypeList.find((item) => item.value === watch('issueType'))
+  }, [watch('issueType')])
+  const onRightIssue = () => {
+    const current = getValues('issueType')
+    let i = 0
+    for (i = 0; i < issueTypeList.length; i++) {
+      if (issueTypeList[i].value == current) {
+        break
+      }
+    }
+    if (i + 1 >= issueTypeList.length) {
+      i = -1
+    }
+    setValue('issueType', issueTypeList[i + 1].value)
   }
   return (
     <Container>
@@ -124,11 +159,11 @@ export function ReportEditView({
             </TitleWrapper>
           )}
         />
-        <Flex align="center" justify="space-between">
-          <Controller
-            control={control}
-            name="type"
-            render={({ field: { value, onChange } }) => (
+        <Controller
+          control={control}
+          name="type"
+          render={({ field: { value, onChange } }) => (
+            <TitleWrapper label="Report Type">
               <Radio.Group
                 value={value}
                 onChange={onChange}
@@ -138,23 +173,54 @@ export function ReportEditView({
                     label: 'Bug',
                     value: ReportType.BUG,
                   },
+                  {
+                    label: 'Wish',
+                    value: ReportType.WISH,
+                  },
                 ]}
               />
-            )}
-          />
-          <Flex style={{ cursor: 'pointer' }} onClick={onRight} align="center">
-            <Tag
-              style={{ width: 80, textAlign: 'center' }}
-              color={severityEntity?.color}
+            </TitleWrapper>
+          )}
+        />
+        <Flex align="center" justify="flex-start" gap={20}>
+          <TitleWrapper label="Issue Type">
+            <Flex
+              style={{ cursor: 'pointer' }}
+              onClick={onRightIssue}
+              align="center"
             >
-              {severityEntity?.label}
-            </Tag>
-            <span>
-              <CaretRightOutlined
-                style={{ fontSize: 18, color: 'lightgrey' }}
-              />
-            </span>
-          </Flex>
+              <Tag
+                style={{ width: 120, textAlign: 'center' }}
+                color={issueTypeEntity?.color}
+              >
+                {issueTypeEntity?.label}
+              </Tag>
+              <span>
+                <CaretRightOutlined
+                  style={{ fontSize: 18, color: 'lightgrey' }}
+                />
+              </span>
+            </Flex>
+          </TitleWrapper>
+          <TitleWrapper label="Severity">
+            <Flex
+              style={{ cursor: 'pointer' }}
+              onClick={onRight}
+              align="center"
+            >
+              <Tag
+                style={{ width: 80, textAlign: 'center' }}
+                color={severityEntity?.color}
+              >
+                {severityEntity?.label}
+              </Tag>
+              <span>
+                <CaretRightOutlined
+                  style={{ fontSize: 18, color: 'lightgrey' }}
+                />
+              </span>
+            </Flex>
+          </TitleWrapper>
         </Flex>
         <Controller
           control={control}
@@ -167,6 +233,33 @@ export function ReportEditView({
               label="Description"
               error={errors.description?.message}
             >
+              <TextArea value={value} onChange={onChange} />
+            </TitleWrapper>
+          )}
+        />
+        <Controller
+          control={control}
+          name="stepsToReproduce"
+          render={({ field: { value, onChange } }) => (
+            <TitleWrapper label="Steps to Reproduce">
+              <TextArea value={value} onChange={onChange} />
+            </TitleWrapper>
+          )}
+        />
+        <Controller
+          control={control}
+          name="expectedBehavior"
+          render={({ field: { value, onChange } }) => (
+            <TitleWrapper label="Expected Behavior">
+              <TextArea value={value} onChange={onChange} />
+            </TitleWrapper>
+          )}
+        />
+        <Controller
+          control={control}
+          name="actualResult"
+          render={({ field: { value, onChange } }) => (
+            <TitleWrapper label="Actual Result">
               <TextArea value={value} onChange={onChange} />
             </TitleWrapper>
           )}

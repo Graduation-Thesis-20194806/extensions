@@ -1,6 +1,7 @@
 export enum ReportType {
   BUG = 'BUG',
   FEEDBACK = 'FEEDBACK',
+  WISH = 'WISH',
 }
 
 export enum Severity {
@@ -18,11 +19,25 @@ export enum ReportStatus {
   DONE = 'DONE',
 }
 
+export enum ReportIssueType {
+  UI = 'UI',
+  FUNCTIONAL = 'FUNCTIONAL',
+  PERFORMANCE = 'PERFORMANCE',
+  SECURITY = 'SECURITY',
+  NETWORK = 'NETWORK',
+  COMPATIBILITY = 'COMPATIBILITY',
+  DATA = 'DATA',
+}
+
 export type ReportListItemEntity = {
   id: number
   name: string
   type: ReportType
   description: string
+  stepsToReproduce?: string
+  expectedBehavior?: string
+  actualResult?: string
+  issueType?: ReportIssueType
   severity?: Severity
   assignedTo?: number
   createdById: number
@@ -45,6 +60,10 @@ export type Report = {
   severity?: Severity
   isPublic: boolean
   description: string
+  stepsToReproduce?: string
+  expectedBehavior?: string
+  actualResult?: string
+  issueType?: ReportIssueType
   url: string
   additionInfo?: AdditionInfo
   createdAt: Date
@@ -83,6 +102,10 @@ export type CreateReportDto = {
   severity?: Severity
   isPublic: boolean
   description: string
+  stepsToReproduce?: string
+  expectedBehavior?: string
+  actualResult?: string
+  issueType?: ReportIssueType
   url: string
   additionInfo?: AdditionInfo
   images?: ReportImage[]
@@ -130,6 +153,10 @@ export const reformatResponse = (
     additionInfo,
     ReportImage,
     projectId,
+    stepsToReproduce,
+    expectedBehavior,
+    actualResult,
+    issueType,
   } = input
   return {
     item: {
@@ -142,6 +169,10 @@ export const reformatResponse = (
       url,
       additionInfo,
       projectId,
+      stepsToReproduce,
+      expectedBehavior,
+      actualResult,
+      issueType,
       images: ReportImage,
     },
     comments: input.ReportComment,
