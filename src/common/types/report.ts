@@ -25,8 +25,8 @@ export enum ReportIssueType {
   PERFORMANCE = 'PERFORMANCE',
   SECURITY = 'SECURITY',
   NETWORK = 'NETWORK',
-  COMPATIBILITY = 'COMPATIBILITY',
   DATA = 'DATA',
+  OTHER = 'OTHER',
 }
 
 export type ReportListItemEntity = {

@@ -66,12 +66,12 @@ const issueTypeList = [
   { label: 'Performance', value: ReportIssueType.PERFORMANCE, color: 'gold' },
   { label: 'Security', value: ReportIssueType.SECURITY, color: 'green' },
   { label: 'Network', value: ReportIssueType.NETWORK, color: 'cyan' },
+  { label: 'Data', value: ReportIssueType.DATA, color: 'purple' },
   {
-    label: 'Compatibility',
-    value: ReportIssueType.COMPATIBILITY,
+    label: 'Other',
+    value: ReportIssueType.OTHER,
     color: 'blue',
   },
-  { label: 'Data', value: ReportIssueType.DATA, color: 'purple' },
   { label: 'Unknown', value: undefined, color: 'default' },
 ]
 export function ReportEditView({
