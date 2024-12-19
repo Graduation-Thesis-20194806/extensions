@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 import { ProjectOutlined } from '@ant-design/icons'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { RouterContext, RouterEnum } from '.'
 import {
@@ -13,8 +14,11 @@ import {
 } from 'antd'
 import { getMyReports } from '@/services/report'
 import { ReportListItemEntity } from '@/common/types/report'
-import { ActionKey } from '@/common/constant'
+import { ActionKey, APP_STATE_KEY } from '@/common/constant'
+import { forceSaveAppState } from '@/app/chromeStorage'
+import { ProjectRole } from '@/common/types/user'
 enum TabEnum {
+  ALL = 'all',
   ASSIGNED = 'assigned',
   OWNER = 'owner',
 }
@@ -71,6 +75,14 @@ function Popup() {
       setListReports(items)
     })
   }, [tab, page, appState.projectId])
+  const options = useMemo(() => {
+    const base = [TabEnum.OWNER]
+    const per = appState?.permission
+    if (!per || per == ProjectRole.GUEST) return base
+    base.push(TabEnum.ASSIGNED)
+    if (per == ProjectRole.MEMBER) return base
+    return [...base, TabEnum.ALL]
+  }, [appState?.permission])
   return (
     <PopupContainer>
       <ProjectTitleContainer>
@@ -80,13 +92,25 @@ function Popup() {
         </Space>
         <Button
           type="primary"
-          onClick={() => setRouter(RouterEnum.CHANGE_PROJECT)}
+          onClick={async () => {
+            await forceSaveAppState(
+              {
+                ...appState,
+                projectId: undefined,
+                projectName: undefined,
+                projectDomains: undefined,
+                permission: undefined,
+              },
+              APP_STATE_KEY,
+            )
+            setRouter(RouterEnum.CHANGE_PROJECT)
+          }}
         >
           Change
         </Button>
       </ProjectTitleContainer>
       <Segmented<TabEnum>
-        options={[TabEnum.OWNER, TabEnum.ASSIGNED]}
+        options={options}
         value={tab}
         onChange={(value) => {
           setTab(value)

@@ -12,19 +12,7 @@ import {
 } from 'react-hook-form'
 import styled from 'styled-components'
 import TitleWrapper from '@/common/components/TitleWrapper'
-import {
-  Button,
-  Col,
-  Flex,
-  Image,
-  Input,
-  Radio,
-  Segmented,
-  Space,
-  Tag,
-  Upload,
-  UploadFile,
-} from 'antd'
+import { Button, Flex, Image, Input, Radio, Segmented, Tag, Upload } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { AWS_URL, UNIQUE_CODE, ViewMode } from '@/common/constant'
 import {
@@ -37,6 +25,7 @@ type Props = {
   onTakeScreenShot: () => void
   handleUpload: (file: any) => void
   onChangeViewMode: (value: ViewMode) => void
+  disableEdit: boolean
 }
 const severityList = [
   {
@@ -78,6 +67,7 @@ export function ReportEditView({
   onTakeScreenShot,
   handleUpload,
   onChangeViewMode,
+  disableEdit = true,
 }: Props) {
   const {
     control,
@@ -110,6 +100,7 @@ export function ReportEditView({
   }
   const issueTypeEntity = useMemo(() => {
     return issueTypeList.find((item) => item.value === watch('issueType'))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch('issueType')])
   const onRightIssue = () => {
     const current = getValues('issueType')
@@ -134,7 +125,7 @@ export function ReportEditView({
             value={ViewMode.REPORT}
             disabled={!watch('id')}
           />
-          <Button htmlType="submit" type="primary">
+          <Button htmlType="submit" type="primary" disabled={disableEdit}>
             Submit
           </Button>
         </Flex>
@@ -155,7 +146,7 @@ export function ReportEditView({
           }}
           render={({ field: { value, onChange } }) => (
             <TitleWrapper label="Report Name" error={errors.name?.message}>
-              <Input value={value} onChange={onChange} />
+              <Input value={value} onChange={onChange} disabled={disableEdit} />
             </TitleWrapper>
           )}
         />
@@ -178,6 +169,7 @@ export function ReportEditView({
                     value: ReportType.WISH,
                   },
                 ]}
+                disabled={disableEdit}
               />
             </TitleWrapper>
           )}
@@ -186,7 +178,7 @@ export function ReportEditView({
           <TitleWrapper label="Issue Type">
             <Flex
               style={{ cursor: 'pointer' }}
-              onClick={onRightIssue}
+              onClick={disableEdit ? undefined : onRightIssue}
               align="center"
             >
               <Tag
@@ -205,7 +197,7 @@ export function ReportEditView({
           <TitleWrapper label="Severity">
             <Flex
               style={{ cursor: 'pointer' }}
-              onClick={onRight}
+              onClick={disableEdit ? undefined : onRight}
               align="center"
             >
               <Tag
@@ -233,7 +225,11 @@ export function ReportEditView({
               label="Description"
               error={errors.description?.message}
             >
-              <TextArea value={value} onChange={onChange} />
+              <TextArea
+                value={value}
+                onChange={onChange}
+                disabled={disableEdit}
+              />
             </TitleWrapper>
           )}
         />
@@ -242,7 +238,11 @@ export function ReportEditView({
           name="stepsToReproduce"
           render={({ field: { value, onChange } }) => (
             <TitleWrapper label="Steps to Reproduce">
-              <TextArea value={value} onChange={onChange} />
+              <TextArea
+                value={value}
+                onChange={onChange}
+                disabled={disableEdit}
+              />
             </TitleWrapper>
           )}
         />
@@ -251,7 +251,11 @@ export function ReportEditView({
           name="expectedBehavior"
           render={({ field: { value, onChange } }) => (
             <TitleWrapper label="Expected Behavior">
-              <TextArea value={value} onChange={onChange} />
+              <TextArea
+                value={value}
+                onChange={onChange}
+                disabled={disableEdit}
+              />
             </TitleWrapper>
           )}
         />
@@ -260,13 +264,19 @@ export function ReportEditView({
           name="actualResult"
           render={({ field: { value, onChange } }) => (
             <TitleWrapper label="Actual Result">
-              <TextArea value={value} onChange={onChange} />
+              <TextArea
+                value={value}
+                onChange={onChange}
+                disabled={disableEdit}
+              />
             </TitleWrapper>
           )}
         />
         <TitleWrapper label="ScreenShot">
           <Flex gap={4} align="center" style={{ marginBottom: 12 }}>
-            <Button onClick={onTakeScreenShot}>Add screenshot</Button>
+            <Button onClick={onTakeScreenShot} disabled={disableEdit}>
+              Add screenshot
+            </Button>
             <Upload
               accept="image/*"
               multiple={false}
@@ -274,8 +284,11 @@ export function ReportEditView({
               customRequest={({ file }) => {
                 handleUpload(file)
               }}
+              disabled={disableEdit}
             >
-              <Button icon={<UploadOutlined />}>Upload</Button>
+              <Button disabled={disableEdit} icon={<UploadOutlined />}>
+                Upload
+              </Button>
             </Upload>
           </Flex>
           <Flex gap={12} wrap>
@@ -292,21 +305,25 @@ export function ReportEditView({
                   preview={false}
                 />
                 <DeleteImageButton
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                    if (item.id)
-                      setValue('deleteImages', [
-                        ...(getValues('deleteImages') ?? []),
-                        item.id,
-                      ])
-                    const images = getValues('images')
+                  onClick={
+                    disableEdit
+                      ? undefined
+                      : (e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          if (item.id)
+                            setValue('deleteImages', [
+                              ...(getValues('deleteImages') ?? []),
+                              item.id,
+                            ])
+                          const images = getValues('images')
 
-                    if (images) {
-                      images?.splice(index, 1)
-                      setValue('images', images)
-                    }
-                  }}
+                          if (images) {
+                            images?.splice(index, 1)
+                            setValue('images', images)
+                          }
+                        }
+                  }
                 >
                   x
                 </DeleteImageButton>
@@ -330,6 +347,7 @@ export function ReportEditView({
                     <Input
                       style={{ flexGrow: 1 }}
                       value={value}
+                      disabled={disableEdit}
                       onChange={(e) => {
                         const message = e.target.value
 
@@ -362,6 +380,7 @@ export function ReportEditView({
                     if (container) container.remove()
                     remove(index)
                   }}
+                  disabled={disableEdit}
                 />
               </Flex>
               <Controller

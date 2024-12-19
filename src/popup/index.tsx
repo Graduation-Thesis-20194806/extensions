@@ -7,9 +7,9 @@ import ChooseProject from './ChooseProject'
 import { Flex, Spin } from 'antd'
 import { loadAppState, subscribeToAppState } from '@/app/chromeStorage'
 import { APP_STATE_KEY } from '@/common/constant'
-import { AppState } from '@excalidraw/excalidraw/types/types'
 import { ConfigProvider } from 'antd'
 import Header from './Header'
+import { AppState } from '@/app/appState'
 const PopupDiv = styled.div`
   width: 400px;
   padding: 8px 24px 24px 24px;

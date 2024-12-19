@@ -11,6 +11,9 @@ export type Project = {
     name?: string
     category?: ProjectRole
   }
+  ProjectDomain?: {
+    url: string
+  }[]
 }
 
 export type ProjectListResponse = {

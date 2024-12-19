@@ -7,11 +7,7 @@ const LogoContainer = styled.h1<{ fontSize: number }>`
   margin: 0;
 `
 const Logo = ({ fontSize }: { fontSize?: number }) => {
-  return (
-    <LogoContainer fontSize={fontSize ?? 24}>
-      A Task Management Tool
-    </LogoContainer>
-  )
+  return <LogoContainer fontSize={fontSize ?? 24}>BugHUST</LogoContainer>
 }
 
 export default Logo

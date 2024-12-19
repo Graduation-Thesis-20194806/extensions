@@ -14,11 +14,7 @@ import {
   urlBasedLocalStorageKey,
 } from '../app/localStorage'
 import { debounce } from '../app/utilities'
-import {
-  loadAppState,
-  saveAppState,
-  subscribeToAppState,
-} from '@/app/chromeStorage'
+import { loadAppState, subscribeToAppState } from '@/app/chromeStorage'
 import {
   ActionKey,
   APP_REPORT_TAB_KEY,
@@ -37,7 +33,7 @@ import {
   ReportType,
   Severity,
 } from '@/common/types/report'
-import { Alert, Button, ConfigProvider, message, Space, Tooltip } from 'antd'
+import { Button, ConfigProvider, message, Space, Tooltip } from 'antd'
 import {
   ProfileOutlined,
   PushpinOutlined,
@@ -181,7 +177,7 @@ export default function Content() {
         }
       },
     )
-  }, [])
+  }, [setError])
   useEffect(() => {
     if (!tabId) return
     const url = window.location.href
@@ -225,22 +221,27 @@ export default function Content() {
         }
       },
     )
-  }, [appState, getValues, setValue, id])
+  }, [appState, getValues, setValue, id, setError])
 
-  useEffect(() => {
+  const showToolButtons = useMemo(() => {
+    const url = window.location.href
+    const parsedUrl = new URL(url)
     if (
       !appState?.projectId ||
-      (report?.projectId && appState.projectId !== report.projectId)
+      (appState?.projectDomains &&
+        !appState.projectDomains.find((item) => item == parsedUrl.hostname))
     ) {
-      console.log('go here', appState?.projectId, report?.projectId)
       setReport(undefined)
+      setCurrentFunction(undefined)
       const elements = document.querySelectorAll(
         `[id^="app-checkpoint-container-${UNIQUE_CODE}"]`,
       )
       elements.forEach((el) => el.remove())
       setId(undefined)
+      return false
     }
-  }, [appState?.projectId, report?.projectId])
+    return true
+  }, [appState?.projectId, appState?.projectDomains])
 
   const saveDebounced = useMemo(
     () =>
@@ -332,11 +333,12 @@ export default function Content() {
         }
       },
     )
-  }, [appState?.userId, getValues, setValue])
+  }, [appState?.userId, getValues, setValue, setError])
 
   const onSubmit = useCallback(
     (values: CreateReportDto) => {
       if (!appState?.projectId) return
+      delete values.createdById
       let action = ActionKey.CREATE_REPORT
       if (values.id) action = ActionKey.UPDATE_REPORT
       chrome.runtime.sendMessage(
@@ -358,7 +360,7 @@ export default function Content() {
         },
       )
     },
-    [appState?.currentReport, appState?.projectId, setValue, tabId],
+    [appState?.projectId, setValue, tabId, setError, messageApi],
   )
   const handleUpload = useCallback(
     async (file: any) => {
@@ -375,7 +377,6 @@ export default function Content() {
           },
         },
         (response) => {
-          console.log(response)
           if (response?.success) {
             const old = getValues('images') ?? []
             setValue('images', [
@@ -417,7 +418,6 @@ export default function Content() {
           },
         },
         (response) => {
-          console.log(response)
           if (response?.success) {
             if (comments) setComments([...comments, response.data])
             else setComments([response.data])
@@ -427,7 +427,7 @@ export default function Content() {
         },
       )
     },
-    [appState?.projectId, appState?.userId, idWatch],
+    [appState?.projectId, appState?.userId, idWatch, setError, comments],
   )
 
   const onEditComment = useCallback(
@@ -444,7 +444,6 @@ export default function Content() {
           },
         },
         (response) => {
-          console.log(response)
           if (response?.success) {
             const commentOld = comments?.find((item) => item.id === id)
             if (!commentOld) return
@@ -457,7 +456,7 @@ export default function Content() {
         },
       )
     },
-    [appState?.projectId, appState?.userId, idWatch],
+    [appState?.projectId, appState?.userId, idWatch, comments, setError],
   )
 
   if (!appState?.userId) return <></>
@@ -520,22 +519,23 @@ export default function Content() {
                 onChangeViewMode={onChangeViewMode}
                 onTakeScreenShot={onTakeScreenShot}
                 handleUpload={handleUpload}
+                disableEdit={
+                  !!report && report.createdById !== appState?.userId
+                }
               />
             </form>
           </FormProvider>
-          {appState?.userId && (
-            <Comments
-              onEditComment={onEditComment}
-              user_id={appState.userId}
-              visible={viewMode === ViewMode.COMMENTS}
-              onChangeViewMode={onChangeViewMode}
-              items={comments}
-              onCreateComment={onCreateComment}
-            />
-          )}
+          <Comments
+            onEditComment={onEditComment}
+            user_id={appState.userId}
+            visible={viewMode === ViewMode.COMMENTS}
+            onChangeViewMode={onChangeViewMode}
+            items={comments}
+            onCreateComment={onCreateComment}
+          />
         </ReportContainer>
       )}
-      {appState?.userId && appState?.projectId && (
+      {showToolButtons && (
         <div
           style={{
             position: 'fixed',

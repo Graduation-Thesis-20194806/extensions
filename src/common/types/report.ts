@@ -68,7 +68,7 @@ export type Report = {
   additionInfo?: AdditionInfo
   createdAt: Date
   updatedAt: Date
-  createById: number
+  createdById: number
   assignTo: number
   projectId: number
   ReportImage?: ReportImage[]
@@ -112,6 +112,7 @@ export type CreateReportDto = {
   newImages?: ReportImage[]
   deleteImages?: number[]
   projectId: number
+  createdById?: number
 }
 
 export type CreateCommentDto = {
@@ -157,6 +158,7 @@ export const reformatResponse = (
     expectedBehavior,
     actualResult,
     issueType,
+    createdById,
   } = input
   return {
     item: {
@@ -174,6 +176,7 @@ export const reformatResponse = (
       actualResult,
       issueType,
       images: ReportImage,
+      createdById,
     },
     comments: input.ReportComment,
   }

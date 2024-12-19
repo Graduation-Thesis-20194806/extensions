@@ -6,6 +6,7 @@ export interface AppState {
   userId?: number
   projectId?: number
   projectName?: string
+  projectDomains?: string[]
   permission?: ProjectRole
   currentReport?: number
 }

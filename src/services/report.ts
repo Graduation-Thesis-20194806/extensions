@@ -8,7 +8,7 @@ import {
 
 export const getMyReports = async (
   projectId: number,
-  role: 'assigned' | 'owner',
+  role: 'assigned' | 'owner' | 'all',
   page: number,
 ): Promise<ReportListResponse> => {
   const res = await apiClient.get(

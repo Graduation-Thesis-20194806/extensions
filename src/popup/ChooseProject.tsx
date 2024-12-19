@@ -6,7 +6,7 @@ import { Flex, List, Pagination, Typography } from 'antd'
 import { Project } from '@/common/types/project'
 import Alert from 'antd/es/alert/Alert'
 import { clearState, saveAppState } from '@/app/chromeStorage'
-import { APP_REPORT_TAB_KEY, APP_STATE_KEY } from '@/common/constant'
+import { APP_REPORT_TAB_KEY, APP_STATE_KEY, AWS_URL } from '@/common/constant'
 import { ProjectRole } from '@/common/types/user'
 const { Paragraph } = Typography
 function ChooseProject() {
@@ -28,12 +28,18 @@ function ChooseProject() {
       })
   }, [page])
   const handleChooseProject = useCallback(
-    async (projectId: number, projectName: string, permission: ProjectRole) => {
+    async (
+      projectId: number,
+      projectName: string,
+      permission: ProjectRole,
+      projectDomains: string[],
+    ) => {
       await saveAppState(
         {
           projectId,
           projectName,
           permission,
+          projectDomains,
         },
         APP_STATE_KEY,
       )
@@ -65,10 +71,11 @@ function ChooseProject() {
                 item.id,
                 item.name,
                 item.userRole?.category ?? ProjectRole.GUEST,
+                item.ProjectDomain?.map((item) => item.url) ?? [],
               )
             }
           >
-            <Thumbnail imgSrc={item.projectThumbnail} />
+            <Thumbnail imgSrc={AWS_URL + '/' + item.projectThumbnail} />
             <ProjectMeta>
               <div className="label">{item.name}</div>
               <Paragraph className="description" ellipsis={{ rows: 2 }}>
